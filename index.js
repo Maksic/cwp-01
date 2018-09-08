@@ -9,21 +9,24 @@ var pathFile = DIR_PATH + "/" + floderName;
     });
 
 (function getFiles(baseDir) {
-    fs.readdir(baseDir, function (err, files) {
 
+    fs.readdir(baseDir, function (err, files) {
         files.forEach(function(file){
             var extname = path.extname(file);
-            if(extname == ".txt"){
+                    fs.readFile("config.json","utf8", function(err, data) {
+                    copyrights = JSON.parse(data);
+                    var copyrightInfo = copyrights.copyright;
+                     if(extname == ".txt"){
                 fileName = path.basename(file, extname);
                 fileContent = fs.readFileSync(baseDir + path.sep + file, "utf8", function(err, data) {
                         if(err) throw err; 
                         });
-                console.log(fileContent);
-                fs.appendFile(pathFile + "/" + fileName + extname, fileContent, function(err) {
+                fs.appendFile(pathFile + "/" + fileName + extname,copyrightInfo + "\n" + fileContent + "\n" + copyrightInfo, function(err) {
                         if(err) throw err; 
                         });
-                console.log(fileName);
             } 
+                        if(err) throw err; 
+                        });
         })
 
         for (let i in files) {
@@ -32,14 +35,13 @@ var pathFile = DIR_PATH + "/" + floderName;
                     if (stats.isDirectory()) {
                         getFiles(currentDir);
                     } else {
-                    	fs.appendFile(path.resolve(DIR_PATH + "/summary.js"), "console.log('"+ currentDir+ "');\n", function(err) {
+                    	fs.appendFile(path.resolve(DIR_PATH + "/summary.js"), "console.log('" + currentDir + "');\n", function(err) {
     					if(err) throw err; 
 						});
-                       // console.log(path.relative(__dirname, currentDir));
+                      
                     }
                 }
             );
         }
-
     });
 })(DIR_PATH, null);
